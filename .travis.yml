@@ -1,0 +1,47 @@
+arch: amd64
+dist: trusty
+language: go
+go:
+  - 1.15.x
+before_install:
+  - export GO111MODULE=on
+before_script:
+  - |
+    if [ -z "$TRAVIS_TAG" ]; then
+      export TARGET_NAME=faktor-dev
+    else
+      export TARGET_NAME=faktor-$TRAVIS_TAG
+    fi
+script:
+  - echo "building "$TARGET_NAME" ..."
+  - env GOOS=linux GOARCH=386 go build -ldflags="-s -w" -o $TARGET_NAME.linux.386.bin cmd/all/main.go
+  - env GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o $TARGET_NAME.linux.amd64.bin cmd/all/main.go
+  - env GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o $TARGET_NAME.darwin.amd64.bin cmd/all/main.go
+  - env GOOS=windows GOARCH=386 go build -ldflags="-s -w" -o $TARGET_NAME.windows.386.exe cmd/all/main.go
+  - env GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -o $TARGET_NAME.windows.amd64.exe cmd/all/main.go
+before_deploy:
+  - wget https://github.com/upx/upx/releases/download/v3.95/upx-3.95-amd64_linux.tar.xz
+  - tar -xvJf upx-3.95-amd64_linux.tar.xz
+  - ./upx-3.95-amd64_linux/upx --brute $TARGET_NAME.linux.386.bin
+  - chmod a+x $TARGET_NAME.linux.386.bin
+  - tar -cvJf $TARGET_NAME.linux.386.tar.xz $TARGET_NAME.linux.386.bin
+  - ./upx-3.95-amd64_linux/upx --brute $TARGET_NAME.linux.amd64.bin
+  - chmod a+x $TARGET_NAME.linux.amd64.bin
+  - tar -cvJf $TARGET_NAME.linux.amd64.tar.xz $TARGET_NAME.linux.amd64.bin
+  - ./upx-3.95-amd64_linux/upx --brute $TARGET_NAME.darwin.amd64.bin
+  - chmod a+x $TARGET_NAME.darwin.amd64.bin
+  - tar -cvJf $TARGET_NAME.darwin.amd64.tar.xz $TARGET_NAME.darwin.amd64.bin
+  - travis_wait ./upx-3.95-amd64_linux/upx --brute $TARGET_NAME.windows.386.exe
+  - tar -cvJf $TARGET_NAME.windows.386.tar.xz $TARGET_NAME.windows.386.exe
+  - travis_wait ./upx-3.95-amd64_linux/upx --brute $TARGET_NAME.windows.amd64.exe
+  - tar -cvJf $TARGET_NAME.windows.amd64.tar.xz $TARGET_NAME.windows.amd64.exe
+deploy:
+  provider: releases
+  api_key:
+    secure: imPCeO7uTi+VjsR6wxNw0/jY1P7pQMM9rsCfMKD2+gSkbKIh+/JT0Eo0UbowjjA2z5UcrwjccHNDYEI4IYLYykxhcGd+QYxiUWlGR1ZHVSh5fgK1beh4ZBQ58FpKeyiGVaHqE1SNvbNBNDWoFmi5dHFRd8XtLU9e+13EdgDUESa4V85vKAxfvG9O5AfQwbCc+qlnLkHkTPDJ+1A3y5VTHA+rJlFn4DRx/AXfWkmV0/gbWGxqSvVVsWNJZ+1uCAGra0950uWOREj6HaPk23dkmF8D+fbQ1KRZN4+XF02ErW+Hqcos0CW2GamybaZ6Iplq61ExlA5j/mfyBbh93/ex2m3oudnIhEOAOme/kU6S47lsCEqUbP/gPE2rFW0oVeLSA82qtWsUGsDq/hDYFHhfQBQxXrtoLbw7xja0IQUc+ltCCK2NNWNUTXtb65YhatAimO8DYEI9qrYyibe9BoY78Ye2R1wX9gFF4uW8HJ477n+FhH5oYh0tS0hHyz7WhRfEEq2IWspYbf9HpkE/EcZJAMy6+7UA6J+EG3T72gsrnRWDp8gGnejsqfrCFtdXpFMshJYvN5Y+QkjmEVCl13jsekhD5sGEJl4LcQQQbV0TVk586YOfMJsaDkFtNSGdmNiklfvwENm4mTrAJDzaYEyZ3JwqshVteYD8KEEjyQA9dGc=
+  file_glob: true
+  file: $TARGET_NAME.*.tar.xz
+  skip_cleanup: true
+  on:
+    repo: CharLemAznable/faktor-mysql
+    tags: true
