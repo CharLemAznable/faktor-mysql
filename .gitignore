@@ -18,5 +18,5 @@
 .idea
 go.sum
 
-faktor.bin
+*.bin
 faktor.db.log
