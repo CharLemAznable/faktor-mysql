@@ -31,6 +31,37 @@ $ tar -xvJf faktor-[version].[arch].[os].tar.xz
 $ ./build.sh
 ```
 
+#### 查看帮助
+
+```bash
+$ ./faktor.bin --help
+########    ###    ##    ## ########  #######  ########
+##         ## ##   ##   ##     ##    ##     ## ##     ##
+##        ##   ##  ##  ##      ##    ##     ## ##     ##
+######   ##     ## #####       ##    ##     ## ########
+##       ######### ##  ##      ##    ##     ## ##   ##
+##       ##     ## ##   ##     ##    ##     ## ##    ##
+##       ##     ## ##    ##    ##     #######  ##     ##
+
+fake mysql server
+
+Usage:
+  faktor [flags]
+
+Commands:
+  load, create  load a schema [ with init sql script ]
+  unload, drop  unload a schema
+  help          use 'help [command]' for command help
+
+Flags:
+  -p, --port     int       mysql server port (default: 9900)
+  -u, --username string    mysql user name (default: auser)
+  -w, --password string    mysql password (default: sa)
+      --log      string    fake database log output (default: faktor.db.log)
+      --nocolor            disable color output
+  -h, --help               display help
+```
+
 #### 启动
 
 启动伪数据库服务后, 进入命令行模式
@@ -48,25 +79,7 @@ $ ./faktor.bin
 faktor »  
 ```
 
-可选参数:
-* --log: 指定伪数据库日志输出路径, 默认为faktor.db.log
-* --port/-p: 指定伪数据库端口号, 默认9900
-* --username/-u: 指定伪数据库用户名, 默认auser
-* --password/-p: 指定伪数据库用户密码, 默认sa
-
-#### 加载数据库
-
-```bash
-faktor » load [schema name] [init sql script file path, optional]
-```
-
-#### 卸载数据库
-
-```bash
-faktor » unload [schema name]
-```
-
-#### 查看帮助
+#### 查看命令行帮助
 
 ```bash
 faktor » help
@@ -118,4 +131,16 @@ Args:
 
 Flags:
   -h, --help     display help
+```
+
+#### 加载数据库
+
+```bash
+faktor » load [schema name] [init sql script file path, optional]
+```
+
+#### 卸载数据库
+
+```bash
+faktor » unload [schema name]
 ```
