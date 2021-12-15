@@ -17,6 +17,8 @@ Viktor(维克托): <Arcane: League of Legends>(<英雄联盟：双城之战>)中
 
     下载地址: [faktor-mysql releases](https://github.com/CharLemAznable/faktor-mysql/releases)
 
+    *Mac系统如无法执行bin文件, 请在 ```系统偏好设置 -> 安全性与隐私``` 中允许程序运行*
+
 ```bash
 $ tar -xvJf faktor-[version].[arch].[os].tar.xz
 ```
